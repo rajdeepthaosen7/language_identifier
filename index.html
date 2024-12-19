@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #languageResult {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Language Detection</h1>
+    <p>Enter the text to detect its language:</p>
+    
+    <form id="languageForm">
+        <textarea id="inputText" placeholder="Enter text here..."></textarea><br><br>
+        <button type="submit">Detect Language</button>
+    </form>
+    
+    <h2>Detected Language: <span id="languageResult">N/A</span></h2>
+
+    <script>
+        document.getElementById("languageForm").addEventListener("submit", async function(event) {
+            event.preventDefault();  // Prevent form from refreshing the page
+            
+            let inputText = document.getElementById("inputText").value;
+
+            // Send a POST request to the backend with the input text
+            const response = await fetch('/detect_language', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: inputText })
+            });
+
+            // Handle response and display the detected language
+            const data = await response.json();
+            if (data.language) {
+                document.getElementById("languageResult").textContent = data.language;
+            } else {
+                document.getElementById("languageResult").textContent = "Error: " + data.error;
+            }
+        });
+    </script>
+</body>
+</html>
